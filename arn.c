@@ -14,22 +14,23 @@ struct arn_ {
     NODE *raiz;
 };
 
-void pre(NODE* Raiz);
-void pos_delete(NODE* root);
+void pre(NODE* raiz);
+void pos_delete(NODE** root);
 NODE* criar_node(int chave);
 NODE* left_rotation(NODE* x);
 NODE* right_rotation(NODE* x);
 //NODE* criar_node(int chave);
-NODE* rec_inserir(NODE *Raiz, NODE* Novo);
-NODE* rec_remove(NODE* Raiz, int chave);
-NODE* remove_min(NODE* Raiz);
+NODE* rec_inserir(NODE *raiz, NODE* Novo, bool* confirma);
+NODE* rec_remove(NODE* raiz, int chave);
+NODE* remove_min(NODE* raiz);
 
+//Inicio de funções de usuário
 ARN *arn_criar (void) {
     ARN *NewT = (ARN*) malloc(sizeof(ARN));
 
-    if(NewT != NULL)  
+    if(NewT != NULL) {
         NewT->raiz = NULL;
-    else
+    } else
         printf("Erro ao criar. Espaço insuficiente");
 
     return NewT;
@@ -38,21 +39,25 @@ ARN *arn_criar (void) {
 bool arn_inserir (ARN *T, int chave) {
     if(T == NULL){printf("Erro ao inserir. Árvore não existe"); return false;}
 
+    //Se a árvore não for nula ele cria o nó
     NODE *NewN = (NODE*) malloc(sizeof(NODE));
 
-    if(NewN == NULL) 
+    if(NewN == NULL) {
         printf("Erro ao inserir. Espaço insuficiente");
-    else {
+        return false; //Se a alocação do novo nó for má sucedida
+    } else {
         NewN->Esquerda = NULL;
         NewN->Direita = NULL;
         NewN->chave = chave;
         NewN->cor = RED;
     }
 
-    T->raiz = rec_inserir(T->raiz, NewN);
-    T->raiz->cor = BLACK;
+    bool confirma = true;
+    //caso o número a ser inserido já estiver na árvore confirma = false
+    T->raiz = rec_inserir(T->raiz, NewN, &confirma);
+    T->raiz->cor = BLACK; //Ajuste do primeiro caso
 
-    return true;
+    return confirma;
 }
 
 void arn_imprimir (ARN *T) {
@@ -63,19 +68,18 @@ void arn_imprimir (ARN *T) {
         printf("Erro ao imprimir, a árvore não existe");
 }
 
-bool arn_remover(ARN *T, int chave) {
-    if(T == NULL){printf("Erro ao remover. Árvore não existe."); return false;}
+int *arn_remover(ARN *T, int chave) {
+    if(T == NULL){printf("Erro ao remover. Árvore não existe."); return NULL;}
 
     T->raiz = rec_remove(T->raiz, chave);
     T->raiz->cor = BLACK;
-    return true;    
+    return NULL;    
 }
-
 
 void arn_apagar (ARN **T) {
     if((*T) != NULL) {
         if((*T)->raiz != NULL)
-        pos_delete((*T)->raiz);
+        pos_delete(&(*T)->raiz);
 
         free(*T);
         *T = NULL;
@@ -98,80 +102,69 @@ int *arn_busca(ARN *T, int chave) {
 bool arn_vazia(ARN *T) {
     return T == NULL || T->raiz == NULL;
 }
-  
-void pre(NODE* Raiz) {
-    if(Raiz != NULL) {
-        printf("%d ", Raiz->chave);
-        if(Raiz->cor) printf("RED"); else printf("BLACK");
+//Fim das funções de usuário  
+
+void recalcular_altura(ARN *T);
+
+int maior(int a, int b){
+    return (a > b ? a:b);
+}
+
+//Auxilia imprimir a árvore
+void pre(NODE* raiz) {
+    if(raiz != NULL) {
+        printf("%d ", raiz->chave);
+        if(raiz->cor) printf("RED"); else printf("BLACK");
         printf("\n");
-        pre(Raiz->Esquerda);
-        pre(Raiz->Direita);
+        pre(raiz->Esquerda);
+        pre(raiz->Direita);
     }
 }
 
-void pos_delete(NODE* root) {
+//Auxilia apagar a árvore
+void pos_delete(NODE** root) {
     if(root != NULL) {
-        pos_delete(root->Esquerda);
-        pos_delete(root->Direita);
-        free(root);
+        pos_delete(&(*root)->Esquerda);
+        pos_delete(&(*root)->Direita);
+        free(*root);
+        *root = NULL;
     }
 }
 
-bool eh_vermelho(NODE* Raiz) {
-    if(Raiz == NULL) return false;
-    return Raiz->cor == RED;
+//Funções auxiliares para remoção e deleção
+bool eh_vermelho(NODE* raiz) {
+    if(raiz == NULL) return false;
+    return raiz->cor == RED;
 }
 
 NODE* left_rotation(NODE* x){
-    printf("esquerda\n");
     NODE* y = x->Direita;
     x->Direita = y->Esquerda;
     y->Esquerda = x;
     
+    int aux = x->cor;
+    x->cor = y->cor;
+    y->cor = aux;
+
     return y;
 }
 
 NODE* right_rotation(NODE* x){
-    printf("direita\n");
     NODE* y = x->Esquerda;
     x->Esquerda = y->Direita;
     y->Direita = x;
 
-    return y;
-}
-
-void swap_colors(NODE* x, NODE* y) {
     int aux = x->cor;
     x->cor = y->cor;
     y->cor = aux;
+
+    return y;
 }
 
-NODE* rec_inserir(NODE *Raiz, NODE* Novo) {
-    if(Raiz == NULL)
-        Raiz = Novo;
-    else if(Novo->chave < Raiz->chave)
-        Raiz->Esquerda = rec_inserir(Raiz->Esquerda, Novo);
-    else
-        Raiz->Direita = rec_inserir(Raiz->Direita, Novo);
-    
-
-    if(eh_vermelho(Raiz->Direita) && !eh_vermelho(Raiz->Esquerda)) {
-        Raiz = left_rotation(Raiz);
-        swap_colors(Raiz, Raiz->Esquerda);
-    }
-
-    if(eh_vermelho(Raiz->Esquerda) && eh_vermelho(Raiz->Esquerda->Esquerda)) {
-        Raiz = right_rotation(Raiz);
-        swap_colors(Raiz, Raiz->Direita);
-    }
-
-    if(eh_vermelho(Raiz->Direita) && eh_vermelho(Raiz->Esquerda)) {
-        Raiz->cor = !Raiz->cor;
-        Raiz->Direita->cor = BLACK;
-        Raiz->Esquerda->cor = BLACK;
-    }
-
-    return Raiz;
+void inverte_cores(NODE* x) {
+    x->cor = !x->cor;
+    x->Direita->cor = !x->Direita->cor;
+    x->Esquerda->cor = !x->Esquerda->cor;
 }
 
 NODE* acha_min(NODE* trocado) {
@@ -182,87 +175,110 @@ NODE* acha_min(NODE* trocado) {
     return aux;
 }
 
-NODE* move_esquerda(NODE* Raiz) {
-    Raiz->cor = BLACK;
-    Raiz->Esquerda->cor = RED; 
-    if(eh_vermelho(Raiz->Direita->Esquerda)) {
-        Raiz->Direita = right_rotation(Raiz->Direita);
-        Raiz = left_rotation(Raiz);
-    } else 
-        Raiz->Direita->cor = RED;
-    return Raiz;
-}
+/*
+true - esquerda
+false - direita
+*/
+NODE* move_red(NODE* raiz, bool lado) {
 
-NODE* move_direita(NODE* Raiz) {
-    Raiz->cor = BLACK;
-    Raiz->Direita->cor = RED; 
-    if(Raiz->Esquerda != NULL && eh_vermelho(Raiz->Esquerda->Esquerda)) {
-        Raiz = right_rotation(Raiz);
-        Raiz->cor = RED;
-        Raiz->Esquerda->cor = BLACK;
-    } else 
-        Raiz->Esquerda->cor = RED;
-    return Raiz;
-}
-
-NODE* remove_min(NODE* Raiz) {
-    if(Raiz->Esquerda == NULL) {
-        NODE* aux = Raiz->Direita;
-        free(Raiz); Raiz = NULL; 
-        return aux;
+    inverte_cores(raiz); 
+    if(lado && eh_vermelho(raiz->Direita->Esquerda)) {
+        raiz->Direita = right_rotation(raiz->Direita);
+        raiz = left_rotation(raiz);
+        inverte_cores(raiz);
+    } 
+    
+    if(!lado && eh_vermelho(raiz->Esquerda->Esquerda)) {
+        raiz = right_rotation(raiz);
+        inverte_cores(raiz);
     }
 
-    if(!eh_vermelho(Raiz->Esquerda) && !eh_vermelho(Raiz->Esquerda->Esquerda))
-        Raiz = move_esquerda(Raiz);
-
-    Raiz->Esquerda = remove_min(Raiz->Esquerda);
-
-    if(eh_vermelho(Raiz->Direita)) {
-        Raiz = left_rotation(Raiz);
-        swap_colors(Raiz, Raiz->Esquerda);
-    }
-
-    if(eh_vermelho(Raiz->Esquerda) && eh_vermelho(Raiz->Esquerda->Esquerda)) {
-        Raiz = right_rotation(Raiz);
-        Raiz->Esquerda->cor = BLACK;
-    }
-
-    return Raiz;
+    return raiz;
 }
 
-NODE* rec_remove(NODE* Raiz, int chave) {
+//Na volta da recursão reorganiza a árvore
+NODE* arruma(NODE* raiz) {
+    if(eh_vermelho(raiz->Direita) && !eh_vermelho(raiz->Esquerda)) raiz = left_rotation(raiz);
 
-    if(chave < Raiz->chave) {
-        if(!eh_vermelho(Raiz->Esquerda) && !eh_vermelho(Raiz->Esquerda->Esquerda))
-            Raiz = move_esquerda(Raiz);
+    if(eh_vermelho(raiz->Esquerda) && eh_vermelho(raiz->Esquerda->Esquerda)) raiz = right_rotation(raiz);
+    
+    if(eh_vermelho(raiz->Direita) && eh_vermelho(raiz->Esquerda)) inverte_cores(raiz);
 
-        Raiz->Esquerda = rec_remove(Raiz->Esquerda, chave);
-    } else {
+    return raiz;
+}
 
-        if(eh_vermelho(Raiz->Esquerda)){
-            Raiz = right_rotation(Raiz);
-            swap_colors(Raiz, Raiz->Direita);    
-        }
+//Principal inserção
+NODE* rec_inserir(NODE *raiz, NODE* Novo, bool* confirma) {
+    if(raiz == NULL)
+        return Novo;
 
-        if(chave == Raiz->chave && Raiz->Direita == NULL) 
-            return NULL;
-
-        if(!eh_vermelho(Raiz->Direita) && !eh_vermelho(Raiz->Direita->Esquerda))
-            Raiz = move_direita(Raiz);
-
-        if(chave == Raiz->chave) {
-            Raiz->chave = acha_min(Raiz->Direita)->chave;
-            Raiz->Direita = remove_min(Raiz->Direita);
-        } 
-        else  Raiz->Direita = rec_remove(Raiz->Direita, chave);
+    if(raiz->chave == Novo->chave) {
+        *confirma = false;
+        free(Novo); Novo = NULL;
+        return raiz; //Evita valores duplicados
     }
     
-    if(eh_vermelho(Raiz->Direita)) Raiz = left_rotation(Raiz);
+    if(Novo->chave < raiz->chave)
+        raiz->Esquerda = rec_inserir(raiz->Esquerda, Novo, confirma);
+    else
+        raiz->Direita = rec_inserir(raiz->Direita, Novo, confirma);
+    
+    return arruma(raiz);
+}
 
-    if(eh_vermelho(Raiz->Esquerda) && eh_vermelho(Raiz->Esquerda->Esquerda)) {
-        Raiz = right_rotation(Raiz);
-        Raiz->Esquerda->cor = BLACK;
+//Deleção principal
+NODE* remove_min(NODE* raiz) {
+    if(raiz->Esquerda == NULL) {
+        //Não precisa se preocupar se existe um nó a direita pelas propriedades da árvore
+        free(raiz); raiz = NULL; 
+        return NULL;
     }
 
-    return Raiz;
+    if(!eh_vermelho(raiz->Esquerda) && !eh_vermelho(raiz->Esquerda->Esquerda))
+        raiz = move_red(raiz, true);
+
+    raiz->Esquerda = remove_min(raiz->Esquerda);
+
+    return arruma(raiz);;
+}
+
+NODE* rec_remove(NODE* raiz, int chave) {
+
+    if(chave < raiz->chave) {
+        if(!eh_vermelho(raiz->Esquerda) && !eh_vermelho(raiz->Esquerda->Esquerda))
+            raiz = move_red(raiz, true);
+
+        raiz->Esquerda = rec_remove(raiz->Esquerda, chave);
+    } else {
+
+        if(eh_vermelho(raiz->Esquerda))
+            raiz = right_rotation(raiz);
+
+        if(chave == raiz->chave && raiz->Direita == NULL) 
+            return NULL;
+
+        if(!eh_vermelho(raiz->Direita) && !eh_vermelho(raiz->Direita->Esquerda))
+            raiz = move_red(raiz, false);
+
+        if(chave == raiz->chave) {
+            raiz->chave = acha_min(raiz->Direita)->chave;
+            raiz->Direita = remove_min(raiz->Direita);
+        } 
+        else  raiz->Direita = rec_remove(raiz->Direita, chave);
+    }
+
+    return arruma(raiz);;
+}
+
+void rec_uniao(ARN *nova, NODE *original){
+    if (original == NULL || nova == NULL) return;
+    arn_inserir(nova, original->chave);
+    rec_uniao(nova, original->Esquerda);
+    rec_uniao(nova, original->Direita);
+}
+
+ARN *arn_uniao(ARN* uniao, ARN *a, ARN *b){
+    rec_uniao(uniao, a->raiz);
+    rec_uniao(uniao, b->raiz);
+    return uniao;
 }
