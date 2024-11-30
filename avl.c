@@ -175,6 +175,7 @@ void helper_arvore_imprimir(ARV *arv){
 
 void arvore_imprimir(AVL *avl){
     helper_arvore_imprimir(avl->arvore);
+    printf("\n");
 }
 
 bool pertence_helper(ARV *arv, int valor){
@@ -188,7 +189,7 @@ bool arvore_pertence(AVL *avl, int valor){
     return pertence_helper(avl->arvore, valor);
 }
 
-bool arvore_get_tamanho(AVL *avl){
+int arvore_get_tamanho(AVL *avl){
     return avl->size;
 }
 
@@ -199,8 +200,23 @@ void insert_tree(AVL *nova, ARV *original){
     insert_tree(nova, original->right);
 }
 
-AVL *arvore_merge(AVL* uniao, AVL *a, AVL *b){
+void arvore_merge(AVL* uniao, AVL *a, AVL *b){
     insert_tree(uniao, a->arvore);
     insert_tree(uniao, b->arvore);
-    return uniao;
+}
+
+void interseccao_helper(AVL *interseccao, AVL *b, ARV *no_de_a){
+    if (interseccao == NULL || no_de_a == NULL) return;
+    if (arvore_pertence(b, no_de_a->valor)) arvore_inserir(interseccao, no_de_a->valor);
+    interseccao_helper(interseccao, b, no_de_a->left);
+    interseccao_helper(interseccao, b, no_de_a->right);
+}
+
+void arvore_intersect(AVL* intersection, AVL *a, AVL *b){
+    if (a->size < b->size){
+        interseccao_helper(intersection, b, a->arvore);
+    }
+    else{
+        interseccao_helper(intersection, a, b->arvore);
+    }
 }

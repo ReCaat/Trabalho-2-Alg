@@ -7,5 +7,6 @@ bool arvore_remover(AVL *arvore, int valor);
 void arvore_apagar(AVL *arvore);
 void arvore_imprimir(AVL *arvore);
 bool arvore_pertence(AVL *arvore, int valor);
-AVL *arvore_merge(AVL *uniao, AVL *a, AVL *b);
+void arvore_merge(AVL *uniao, AVL *a, AVL *b);
+void arvore_intersect(AVL* intersection, AVL *a, AVL *b);
 int arvore_get_tamanho(AVL *arvore);
