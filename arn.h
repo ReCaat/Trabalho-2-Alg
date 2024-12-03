@@ -53,6 +53,11 @@
   
   /*Função para mesclar os elementos de duas árvores*/
   ARN *arn_uniao(ARN *Result, ARN *A, ARN *B);
+
+  /*Função para criar uma arvore a partir dos seus elementos identicos de duas árvores*/
   void arn_intersec(ARN* intersection, ARN *a, ARN *b);
   
+  /*Confere se um elemento existe na árvore*/
+  bool arvore_pertence(ARN *T, int chave);
+
 #endif
