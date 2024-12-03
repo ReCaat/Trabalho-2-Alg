@@ -16,10 +16,8 @@ struct arn_ {
 
 void pre(NODE* raiz);
 void pos_delete(NODE** root);
-NODE* criar_node(int chave);
 NODE* left_rotation(NODE* x);
 NODE* right_rotation(NODE* x);
-//NODE* criar_node(int chave);
 NODE* rec_inserir(NODE *raiz, NODE* Novo, bool* confirma);
 NODE* rec_remove(NODE** raiz, int chave);
 NODE* remove_min(NODE** raiz);
@@ -175,10 +173,8 @@ NODE* acha_min(NODE* trocado) {
     return aux;
 }
 
-/*
-true - esquerda
-false - direita
-*/
+//true - esquerda
+//false - direita
 NODE* move_red(NODE* raiz, bool lado) {
 
     inverte_cores(raiz); 
@@ -198,11 +194,13 @@ NODE* move_red(NODE* raiz, bool lado) {
 
 //Na volta da recursão reorganiza a árvore
 NODE* arruma(NODE* raiz) {
-    if(eh_vermelho(raiz->Direita) && !eh_vermelho(raiz->Esquerda)) raiz = left_rotation(raiz);
+    if(raiz != NULL) {
+        if(eh_vermelho(raiz->Direita) && !eh_vermelho(raiz->Esquerda)) raiz = left_rotation(raiz);
 
-    if(eh_vermelho(raiz->Esquerda) && eh_vermelho(raiz->Esquerda->Esquerda)) raiz = right_rotation(raiz);
-    
-    if(eh_vermelho(raiz->Direita) && eh_vermelho(raiz->Esquerda)) inverte_cores(raiz);
+        if(eh_vermelho(raiz->Esquerda) && eh_vermelho(raiz->Esquerda->Esquerda)) raiz = right_rotation(raiz);
+        
+        if(eh_vermelho(raiz->Direita) && eh_vermelho(raiz->Esquerda)) inverte_cores(raiz);
+    }
 
     return raiz;
 }
@@ -228,6 +226,8 @@ NODE* rec_inserir(NODE *raiz, NODE* Novo, bool* confirma) {
 
 //Deleção principal
 NODE* remove_min(NODE** raiz) {
+    if(*raiz == NULL) return NULL;
+
     if((*raiz)->Esquerda == NULL) {
         //Não precisa se preocupar se existe um nó a direita pelas propriedades da árvore
         free(*raiz); *raiz = NULL; 
@@ -243,9 +243,10 @@ NODE* remove_min(NODE** raiz) {
 }
 
 NODE* rec_remove(NODE** raiz, int chave) {
+    if(*raiz == NULL) return NULL;
 
     if(chave < (*raiz)->chave) {
-        if(!eh_vermelho((*raiz)->Esquerda) && !eh_vermelho((*raiz)->Esquerda->Esquerda))
+        if((*raiz)->Esquerda != NULL && !eh_vermelho((*raiz)->Esquerda) && !eh_vermelho((*raiz)->Esquerda->Esquerda))
             *raiz = move_red(*raiz, true);
 
         (*raiz)->Esquerda = rec_remove(&(*raiz)->Esquerda, chave);
@@ -254,10 +255,12 @@ NODE* rec_remove(NODE** raiz, int chave) {
         if(eh_vermelho((*raiz)->Esquerda))
             *raiz = right_rotation(*raiz);
 
-        if(chave == (*raiz)->chave && (*raiz)->Direita == NULL) 
+        if(chave == (*raiz)->chave && (*raiz)->Direita == NULL) {
+            free(*raiz); *raiz = NULL; 
             return NULL;
+        }
 
-        if(!eh_vermelho((*raiz)->Direita) && !eh_vermelho((*raiz)->Direita->Esquerda))
+        if((*raiz)->Direita != NULL && !eh_vermelho((*raiz)->Direita) && !eh_vermelho((*raiz)->Direita->Esquerda))
             *raiz = move_red(*raiz, false);
 
         if(chave == (*raiz)->chave) {
@@ -267,7 +270,7 @@ NODE* rec_remove(NODE** raiz, int chave) {
         else  (*raiz)->Direita = rec_remove(&(*raiz)->Direita, chave);
     }
 
-    return arruma(*raiz);;
+    return arruma(*raiz);
 }
 
 void rec_uniao(ARN *nova, NODE *original){
@@ -277,21 +280,32 @@ void rec_uniao(ARN *nova, NODE *original){
     rec_uniao(nova, original->Direita);
 }
 
-ARN *arvore_merge(ARN* uniao, ARN *a, ARN *b){
+ARN *arn_uniao(ARN* uniao, ARN *a, ARN *b){
     rec_uniao(uniao, a->raiz);
     rec_uniao(uniao, b->raiz);
     return uniao;
 }
 
+bool pertence_helper(NODE *raiz, int chave){
+    if (raiz == NULL) return 0;
+    if (raiz->chave == chave) return 1;
+    if (raiz->chave > chave) return pertence_helper(raiz->Esquerda, chave);
+    else return pertence_helper(raiz->Direita, chave);
+}
+
+bool arvore_pertence(ARN *T, int chave){
+    return pertence_helper(T->raiz, chave);
+}
+
 void rec_intersec(ARN *interseccao, ARN *b, NODE *no_de_a){
     if (interseccao == NULL || no_de_a == NULL) return;
-    if (arvore_pertence(b, no_de_a->chave)) arvore_inserir(interseccao, no_de_a->chave);
+    if (arvore_pertence(b, no_de_a->chave)) arn_inserir(interseccao, no_de_a->chave);
     rec_intersec(interseccao, b, no_de_a->Esquerda);
     rec_intersec(interseccao, b, no_de_a->Direita);
 }
 
 void arn_intersec(ARN* intersection, ARN *a, ARN *b){
     
-    if(a == NULL || b == NULL) return NULL;
+    if(a == NULL || b == NULL) return;
     rec_intersec(intersection, b, a->raiz);
 }
