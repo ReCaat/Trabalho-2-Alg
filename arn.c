@@ -16,8 +16,8 @@ struct arn_ {
 
 void pre(NODE* raiz);
 void pos_delete(NODE** root);
-NODE* left_rotation(NODE* x);
-NODE* right_rotation(NODE* x);
+NODE* rotacao_esq(NODE* x);
+NODE* rotacao_dir(NODE* x);
 NODE* rec_inserir(NODE *raiz, NODE* Novo, bool* confirma);
 NODE* rec_remove(NODE** raiz, int chave, bool* sucesso);
 NODE* remove_min(NODE** raiz);
@@ -130,7 +130,7 @@ bool eh_vermelho(NODE* raiz) {
     return raiz->cor == RED;
 }
 
-NODE* left_rotation(NODE* x){
+NODE* rotacao_esq(NODE* x){
     NODE* y = x->Direita;
     x->Direita = y->Esquerda;
     y->Esquerda = x;
@@ -142,7 +142,7 @@ NODE* left_rotation(NODE* x){
     return y;
 }
 
-NODE* right_rotation(NODE* x){
+NODE* rotacao_dir(NODE* x){
     NODE* y = x->Esquerda;
     x->Esquerda = y->Direita;
     y->Direita = x;
@@ -174,13 +174,13 @@ NODE* move_red(NODE* raiz, bool lado) {
 
     inverte_cores(raiz); 
     if(lado && eh_vermelho(raiz->Direita->Esquerda)) {
-        raiz->Direita = right_rotation(raiz->Direita);
-        raiz = left_rotation(raiz);
+        raiz->Direita = rotacao_dir(raiz->Direita);
+        raiz = rotacao_esq(raiz);
         inverte_cores(raiz);
     } 
     
     if(!lado && eh_vermelho(raiz->Esquerda->Esquerda)) {
-        raiz = right_rotation(raiz);
+        raiz = rotacao_dir(raiz);
         inverte_cores(raiz);
     }
 
@@ -190,9 +190,9 @@ NODE* move_red(NODE* raiz, bool lado) {
 //Na volta da recursão reorganiza a árvore
 NODE* arruma(NODE* raiz) {
     if(raiz != NULL) {
-        if(eh_vermelho(raiz->Direita) && !eh_vermelho(raiz->Esquerda)) raiz = left_rotation(raiz);
+        if(eh_vermelho(raiz->Direita) && !eh_vermelho(raiz->Esquerda)) raiz = rotacao_esq(raiz);
 
-        if(eh_vermelho(raiz->Esquerda) && eh_vermelho(raiz->Esquerda->Esquerda)) raiz = right_rotation(raiz);
+        if(eh_vermelho(raiz->Esquerda) && eh_vermelho(raiz->Esquerda->Esquerda)) raiz = rotacao_dir(raiz);
         
         if(eh_vermelho(raiz->Direita) && eh_vermelho(raiz->Esquerda)) inverte_cores(raiz);
     }
@@ -248,7 +248,7 @@ NODE* rec_remove(NODE** raiz, int chave, bool *sucesso) {
     } else {
 
         if(eh_vermelho((*raiz)->Esquerda))
-            *raiz = right_rotation(*raiz);
+            *raiz = rotacao_dir(*raiz);
 
         if(chave == (*raiz)->chave && (*raiz)->Direita == NULL) {
             *sucesso = true;
