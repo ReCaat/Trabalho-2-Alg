@@ -55,6 +55,6 @@
   ARN *arn_uniao(ARN *Result, ARN *A, ARN *B);
 
   /*Função para criar uma arvore a partir dos seus elementos identicos de duas árvores*/
-  void arn_intersec(ARN* intersection, ARN *a, ARN *b);
+  void arn_intersect(ARN* intersection, ARN *a, ARN *b);
   
 #endif
