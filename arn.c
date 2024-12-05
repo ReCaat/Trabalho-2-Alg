@@ -70,8 +70,8 @@ bool arn_remover(ARN *T, int chave) {
     if(T == NULL){printf("Erro ao remover. Árvore não existe."); return false;}
     bool sucesso = false;
 
-    T->raiz = rec_remove(&T->raiz, chave, &sucesso);
-    T->raiz->cor = BLACK;
+    if(T->raiz != NULL) T->raiz = rec_remove(&T->raiz, chave, &sucesso);
+    if(T->raiz != NULL) T->raiz->cor = BLACK;
     return sucesso;    
 }
 
