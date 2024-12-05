@@ -71,7 +71,7 @@ SET *set_uniao(SET *A, SET *B){
         arvore_merge(novo_set->estrutura, A->estrutura, B->estrutura);
     }
     else{
-        arn_merge(novo_set->estrutura, A->estrutura, B->estrutura);
+        arn_uniao(novo_set->estrutura, A->estrutura, B->estrutura);
     }
     return novo_set;
 }
