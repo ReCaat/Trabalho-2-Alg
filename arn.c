@@ -283,15 +283,15 @@ ARN *arn_uniao(ARN* uniao, ARN *a, ARN *b){
     return uniao;
 }
 
-void rec_intersec(ARN *interseccao, ARN *b, NODE *no_de_a){
+void rec_intersect(ARN *interseccao, ARN *b, NODE *no_de_a){
     if (interseccao == NULL || no_de_a == NULL) return;
     if (arn_pertence(b, no_de_a->chave)) arn_inserir(interseccao, no_de_a->chave);
-    rec_intersec(interseccao, b, no_de_a->Esquerda);
-    rec_intersec(interseccao, b, no_de_a->Direita);
+    rec_intersect(interseccao, b, no_de_a->Esquerda);
+    rec_intersect(interseccao, b, no_de_a->Direita);
 }
 
-void arn_intersec(ARN* intersection, ARN *a, ARN *b){
+void arn_intersect(ARN* intersection, ARN *a, ARN *b){
     
     if(a == NULL || b == NULL) return;
-    rec_intersec(intersection, b, a->raiz);
+    rec_intersect(intersection, b, a->raiz);
 }
