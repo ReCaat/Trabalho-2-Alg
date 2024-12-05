@@ -23,7 +23,7 @@ bool set_pertence(SET *A, int elemento){
         answ = arvore_pertence(A->estrutura, elemento);
     }
     else{
-        answ = arn_busca(A->estrutura, elemento);
+        answ = arn_pertence(A->estrutura, elemento);
     }
     return answ;
 }
