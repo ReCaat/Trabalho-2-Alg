@@ -24,10 +24,10 @@
   bool arn_inserir (ARN *T, int chave);
 
   /*
-  A remoção é similar a inserção em seus parâmetos, o retorno é um ponteiro para
-  aquela chave que está sendo removida. Quando ela não está na árvore retorna NULL.
+  A remoção é similar a inserção em seus parâmetos, o retorno é um booleano que diz 
+  se foi possível ou não remover a chave removida. Quando ela não está na árvore retorna NULL.
   */
-  int *arn_remover(ARN *T, int chave);  
+  bool arn_remover(ARN *T, int chave);  
 
   /*
   Quando passada uma árvore que existe, essa função a imprimirá em pré-ordem para uma melhor vizualização
@@ -44,7 +44,7 @@
   Colocando a árvore que deseja ser buscada e a chave do item como parametros, é retornado um ponteiro para
   ele sem que seja retirado da árvore.
   */
-  int *arn_busca(ARN *T, int chave);
+  bool arn_pertence(ARN *T, int chave);
 
   /*
   Apenas diz se a árvore dada está vazia ou não
@@ -57,7 +57,4 @@
   /*Função para criar uma arvore a partir dos seus elementos identicos de duas árvores*/
   void arn_intersec(ARN* intersection, ARN *a, ARN *b);
   
-  /*Confere se um elemento existe na árvore*/
-  bool arvore_pertence(ARN *T, int chave);
-
 #endif
