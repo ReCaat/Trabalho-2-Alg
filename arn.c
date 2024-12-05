@@ -19,7 +19,7 @@ void pos_delete(NODE** root);
 NODE* left_rotation(NODE* x);
 NODE* right_rotation(NODE* x);
 NODE* rec_inserir(NODE *raiz, NODE* Novo, bool* confirma);
-NODE* rec_remove(NODE** raiz, int chave);
+NODE* rec_remove(NODE** raiz, int chave, bool* sucesso);
 NODE* remove_min(NODE** raiz);
 
 //Inicio de funções de usuário
@@ -66,12 +66,13 @@ void arn_imprimir (ARN *T) {
         printf("Erro ao imprimir, a árvore não existe");
 }
 
-int *arn_remover(ARN *T, int chave) {
-    if(T == NULL){printf("Erro ao remover. Árvore não existe."); return NULL;}
+bool arn_remover(ARN *T, int chave) {
+    if(T == NULL){printf("Erro ao remover. Árvore não existe."); return false;}
+    bool sucesso = false;
 
-    T->raiz = rec_remove(&T->raiz, chave);
+    T->raiz = rec_remove(&T->raiz, chave, &sucesso);
     T->raiz->cor = BLACK;
-    return NULL;    
+    return sucesso;    
 }
 
 void arn_apagar (ARN **T) {
@@ -84,29 +85,23 @@ void arn_apagar (ARN **T) {
     }
 }
 
-int *arn_busca(ARN *T, int chave) {
+bool arn_pertence(ARN *T, int chave) {
     if(T != NULL) {
         NODE* aux = T->raiz;
         while(aux != NULL) {
-            if(chave == aux->chave) return &(aux->chave);
+            if(chave == aux->chave) return true;
 
             if(chave < aux->chave) aux = aux->Esquerda;
             else aux = aux->Direita;
         }
     }
-    return NULL;
+    return false;
 }
 
 bool arn_vazia(ARN *T) {
     return T == NULL || T->raiz == NULL;
 }
 //Fim das funções de usuário  
-
-void recalcular_altura(ARN *T);
-
-int maior(int a, int b){
-    return (a > b ? a:b);
-}
 
 //Auxilia imprimir a árvore
 void pre(NODE* raiz) {
@@ -242,20 +237,21 @@ NODE* remove_min(NODE** raiz) {
     return arruma(*raiz);
 }
 
-NODE* rec_remove(NODE** raiz, int chave) {
+NODE* rec_remove(NODE** raiz, int chave, bool *sucesso) {
     if(*raiz == NULL) return NULL;
 
     if(chave < (*raiz)->chave) {
         if((*raiz)->Esquerda != NULL && !eh_vermelho((*raiz)->Esquerda) && !eh_vermelho((*raiz)->Esquerda->Esquerda))
             *raiz = move_red(*raiz, true);
 
-        (*raiz)->Esquerda = rec_remove(&(*raiz)->Esquerda, chave);
+        (*raiz)->Esquerda = rec_remove(&(*raiz)->Esquerda, chave, sucesso);
     } else {
 
         if(eh_vermelho((*raiz)->Esquerda))
             *raiz = right_rotation(*raiz);
 
         if(chave == (*raiz)->chave && (*raiz)->Direita == NULL) {
+            *sucesso = true;
             free(*raiz); *raiz = NULL; 
             return NULL;
         }
@@ -264,10 +260,11 @@ NODE* rec_remove(NODE** raiz, int chave) {
             *raiz = move_red(*raiz, false);
 
         if(chave == (*raiz)->chave) {
+            *sucesso = true;
             (*raiz)->chave = acha_min((*raiz)->Direita)->chave;
             (*raiz)->Direita = remove_min(&(*raiz)->Direita);
         } 
-        else  (*raiz)->Direita = rec_remove(&(*raiz)->Direita, chave);
+        else  (*raiz)->Direita = rec_remove(&(*raiz)->Direita, chave, sucesso);
     }
 
     return arruma(*raiz);
@@ -286,20 +283,9 @@ ARN *arn_uniao(ARN* uniao, ARN *a, ARN *b){
     return uniao;
 }
 
-bool pertence_helper(NODE *raiz, int chave){
-    if (raiz == NULL) return 0;
-    if (raiz->chave == chave) return 1;
-    if (raiz->chave > chave) return pertence_helper(raiz->Esquerda, chave);
-    else return pertence_helper(raiz->Direita, chave);
-}
-
-bool arvore_pertence(ARN *T, int chave){
-    return pertence_helper(T->raiz, chave);
-}
-
 void rec_intersec(ARN *interseccao, ARN *b, NODE *no_de_a){
     if (interseccao == NULL || no_de_a == NULL) return;
-    if (arvore_pertence(b, no_de_a->chave)) arn_inserir(interseccao, no_de_a->chave);
+    if (arn_pertence(b, no_de_a->chave)) arn_inserir(interseccao, no_de_a->chave);
     rec_intersec(interseccao, b, no_de_a->Esquerda);
     rec_intersec(interseccao, b, no_de_a->Direita);
 }
