@@ -116,7 +116,7 @@ void pre(NODE* raiz) {
 
 //Auxilia apagar a árvore
 void pos_delete(NODE** root) {
-    if(root != NULL) {
+    if(*root != NULL) {
         pos_delete(&(*root)->Esquerda);
         pos_delete(&(*root)->Direita);
         free(*root);
