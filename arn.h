@@ -1,3 +1,13 @@
+/*
+Referente ao header do conjunto 2 - Estrutura Árvore rubro-negro (variação left-leaning)
+Aqui estão as funções principais devidamente comentadas e disponíveis para o usuário usar
+
+Autoria: 
+João Victor Alonso de Mello N°USP - 10951790
+Renan Banci Catarin N°USP - 14658181
+*/
+
+
 #ifndef _ARVORE_RUBRO_NEGRO_H
   #define _ARVORE_RUBRO_NEGRO_H
 
@@ -8,7 +18,13 @@
 
   //A estrutura da Árvore Rubro Negro é definida como seu acrônimo
   typedef struct arn_ ARN;
- 
+  
+  /*
+  Parametros frequêntes:
+  T - A árvore a sofrer a operação
+  chave - valor a ser adicionado, removido ou buscado
+  */
+
   /*
   Para criar uma árvore não é preciso passar parâmetros, apenas relacionar um ponteiro ARN a função.
   Se a alocação não for sucedida, retorna NULL.
@@ -17,21 +33,27 @@
   ARN *arn_criar (void); 
   
   /*
-  Passa inserir uma chave basta passar a árvore de destino e o valor da chave.
+  Insere uma determinada chave na árvore que foi passada como parâmetro. Isso porque essa árvore representa um conjunto
   Não é possível inserir dois itens de mesma chave.
   Retorna "true" se a inserção foi concluída com sucesso, "false" caso não.
   */
   bool arn_inserir (ARN *T, int chave);
 
   /*
-  A remoção é similar a inserção em seus parâmetos, o retorno é um booleano que diz 
-  se foi possível ou não remover a chave removida. Quando ela não está na árvore retorna NULL.
+  Remove uma determinada chave da árvore que foi passada como parâmetro.
+  Retorna um booleano que diz se a chave foi removida ou não.
+  Chaves não são removidas quando não estão presentes na árvore ou quando a árvore não existe ou está vazia.
   */
   bool arn_remover(ARN *T, int chave);  
 
   /*
-  Quando passada uma árvore que existe, essa função a imprimirá em pré-ordem para uma melhor vizualização
-  de como estão dispostos os elementos nessa estrutura.
+  Verifica se uma determinada chave pertence ou não a uma determinada árvore.
+  Se pertencer retorna true, e false caso contrário.
+  */
+  bool arn_pertence(ARN *T, int chave);
+  
+  /*
+  Se a árvore passada como parâmetro existir, imprimirá seus valores em pré-ordem para melhor vizualização da estrutura.
   */
   void arn_imprimir (ARN *T);
   
@@ -41,20 +63,23 @@
   void arn_apagar (ARN **T);
 
   /*
-  Colocando a árvore que deseja ser buscada e a chave do item como parametros, é retornado um ponteiro para
-  ele sem que seja retirado da árvore.
-  */
-  bool arn_pertence(ARN *T, int chave);
-
-  /*
-  Apenas diz se a árvore dada está vazia ou não
+  Diz se a árvore dada está vazia (true) ou não (false),
+  se não existir retorna true.
   */
   bool arn_vazia(ARN *T);
   
-  /*Função para mesclar os elementos de duas árvores*/
+  /*
+  Une os elementos de duas árvores dadas em uma nova
+  Note que ela retorna um ponteiro para a árvore que sairá como resultado.
+  Logo, é preciso relacionar a árvorenova tanto como parametro quanto como saida
+  */
   ARN *arn_uniao(ARN *Result, ARN *A, ARN *B);
 
-  /*Função para criar uma arvore a partir dos seus elementos identicos de duas árvores*/
-  void arn_intersect(ARN* intersection, ARN *a, ARN *b);
+  /*
+  Relaciona os itens de duas árvores dadas, quando um pertence a ambas,o adiciona em uma nova, também dada.
+  Diferentemente da função de união, ela não tem a necessidade de retornar um ponteiro para a árvore de intersecção 
+
+  */
+  void arn_intersect(ARN* intersection, ARN *A, ARN *B);
   
 #endif
