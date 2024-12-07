@@ -105,13 +105,12 @@ void arn_imprimir (ARN *T) {
         printf("Erro ao imprimir, a árvore não existe");
 }
 
-void arn_apagar (ARN **T) {
-    if((*T) != NULL) { //tratamento de erro.
-        if((*T)->raiz != NULL)
-        pos_delete(&(*T)->raiz);
+void arn_apagar (ARN *T) {
+    if(T != NULL) { //tratamento de erro.
+        pos_delete(&T->raiz);
 
-        free(*T);
-        *T = NULL;
+        free(T);
+        T = NULL;
     }
 }
 
@@ -119,10 +118,9 @@ bool arn_vazia(ARN *T) {
     return T == NULL || T->raiz == NULL;
 }
 
-ARN *arn_uniao(ARN* uniao, ARN *A, ARN *B){
+void arn_uniao(ARN* uniao, ARN *A, ARN *B){
     rec_uniao(uniao, A->raiz);
     rec_uniao(uniao, B->raiz);
-    return uniao;
 }
 
 void arn_intersect(ARN* intersection, ARN *A, ARN *B){
@@ -132,13 +130,11 @@ void arn_intersect(ARN* intersection, ARN *A, ARN *B){
 }
 //Fim das funções de usuário.
 
-//Auxilia imprimir a árvore em pré-ordem.
+//Auxilia imprimir a árvore em ordem.
 void pre(NODE* raiz) {
     if(raiz != NULL) {
-        printf("%d ", raiz->chave);
-        if(raiz->cor) printf("RED"); else printf("BLACK");
-        printf("\n");
         pre(raiz->Esquerda);
+        printf("%d ", raiz->chave);
         pre(raiz->Direita);
     }
 }
