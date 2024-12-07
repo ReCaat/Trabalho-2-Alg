@@ -77,7 +77,7 @@ SET *set_uniao(SET *A, SET *B){
 }
 SET *set_interseccao(SET *A, SET *B){
     SET *interseccao = set_criar(A->tipo);
-    if (A->tipo == 1){
+    if (A->tipo == 0){
         arvore_intersect(interseccao->estrutura, A->estrutura, B->estrutura);
     }
     else{
