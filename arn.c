@@ -1,9 +1,9 @@
 /*
 Código correspondente a implementação do conjunto 2, ele foi escolhido como sendo a árvore rubro-negro (variação left-leaning).
 Essa escolha foi feita graças aos seus tempos de operações demoradas:
-Inserção: O(nlogn);
-Remoção: O(nlogn);
-Busca/Pertencimento: O(nlogn);
+Inserção: O(logn);
+Remoção: O(logn);
+Busca/Pertencimento: O(logn);
 Isso ocorre pois ela tenta se manter balanceada através de suas regras descritas no relatório.
 
 Autoria: 
