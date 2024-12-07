@@ -7,8 +7,8 @@ Busca/Pertencimento: O(logn);
 Isso ocorre pois ela tenta se manter balanceada através de suas regras descritas no relatório.
 
 Autoria: 
-João Victor Alonso de Mello N°USP - 10951790
-Renan Banci Catarin N°USP - 14658181
+João Victor Alonso de Mello / N°USP - 10951790
+Renan Banci Catarin / N°USP - 14658181
 */
 
 #include <stdio.h>
