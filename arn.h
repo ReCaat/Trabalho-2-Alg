@@ -60,7 +60,7 @@ Renan Banci Catarin N°USP - 14658181
   /*
   Apaga a árvore passada de parâmetro, deletando devidamente todos os seus nós e a estrutura ARN em si
   */
-  void arn_apagar (ARN **T);
+  void arn_apagar (ARN *T);
 
   /*
   Diz se a árvore dada está vazia (true) ou não (false),
