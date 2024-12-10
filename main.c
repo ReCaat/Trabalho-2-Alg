@@ -55,16 +55,11 @@ int main(void)
     }
     case 4: {
               //remoção
-              int conjunto, elemento;
-              scanf("%d %d", &conjunto, &elemento);
-              if (conjunto == 1){
-                set_remover(A, elemento);
-                set_imprimir(A);
-              }
-              else {
-                set_remover(B, elemento);
-                set_imprimir(B);
-              }
+              int elemento;
+              scanf("%d", &elemento);
+              set_remover(A, elemento);
+              set_imprimir(A);
+              break;
     }
   }
   //set_imprimir(A);

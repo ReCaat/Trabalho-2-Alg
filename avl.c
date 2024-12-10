@@ -133,9 +133,9 @@ ARV *helper_arvore_remover(ARV* avl, int item, bool *removido){
         }
         else{ //o no tem dois filhos
             int tmp = find_min(avl->right)->valor;
-            avl->right = helper_arvore_remover(avl->right, tmp, removido);
+            avl->right = helper_arvore_remover(avl->right, tmp, removido); //salvamos a chave do menor no da subarvore direita e o deletamos
             recalcular_altura(avl);
-            avl->valor = tmp; // o valor do no passa a ser a menor chave da subarvore que comeca com este no
+            avl->valor = tmp; // o valor do no passa a ser a menor chave da subarvore direita
         }
     }
     else if (avl->valor > item){ //busca binaria
@@ -186,7 +186,7 @@ void arvore_apagar(AVL *arv){
 void helper_arvore_imprimir(ARV *arv){
     if (!arv) return;
     helper_arvore_imprimir(arv->left);
-    printf("%d ", arv->valor);
+    printf("%d, ", arv->valor);
     helper_arvore_imprimir(arv->right);
 }
 

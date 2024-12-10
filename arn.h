@@ -73,7 +73,7 @@ Renan Banci Catarin N°USP - 14658181
   Note que ela retorna um ponteiro para a árvore que sairá como resultado.
   Logo, é preciso relacionar a árvorenova tanto como parametro quanto como saida
   */
-  ARN *arn_uniao(ARN *Result, ARN *A, ARN *B);
+  void arn_uniao(ARN *Result, ARN *A, ARN *B);
 
   /*
   Relaciona os itens de duas árvores dadas, quando um pertence a ambas,o adiciona em uma nova, também dada.

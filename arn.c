@@ -134,7 +134,7 @@ void arn_intersect(ARN* intersection, ARN *A, ARN *B){
 void pre(NODE* raiz) {
     if(raiz != NULL) {
         pre(raiz->Esquerda);
-        printf("%d ", raiz->chave);
+        printf("%d, ", raiz->chave);
         pre(raiz->Direita);
     }
 }
