@@ -3,8 +3,8 @@ Referente ao header do conjunto 2 - Estrutura Árvore rubro-negro (variação le
 Aqui estão as funções principais devidamente comentadas e disponíveis para o usuário usar
 
 Autoria: 
-João Victor Alonso de Mello N°USP - 10951790
-Renan Banci Catarin N°USP - 14658181
+João Victor Alonso de Mello / N°USP - 10951790
+Renan Banci Catarin / N°USP - 14658181
 */
 
 
@@ -33,8 +33,8 @@ Renan Banci Catarin N°USP - 14658181
   ARN *arn_criar (void); 
   
   /*
-  Insere uma determinada chave na árvore que foi passada como parâmetro. Isso porque essa árvore representa um conjunto
-  Não é possível inserir dois itens de mesma chave.
+  Insere uma determinada chave na árvore que foi passada como parâmetro. 
+  Não é possível inserir dois itens de mesma chave. Isso porque essa árvore representa um conjunto matemático.
   Retorna "true" se a inserção foi concluída com sucesso, "false" caso não.
   */
   bool arn_inserir (ARN *T, int chave);
